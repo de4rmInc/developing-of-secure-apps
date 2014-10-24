@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Laba1_sql_injection.Models;
+using Laba1_sql_injection.Security;
 
 namespace Laba1_sql_injection.Controllers
 {
@@ -18,21 +19,6 @@ namespace Laba1_sql_injection.Controllers
         public ActionResult Index()
         {
             return View(db.Users.ToList());
-        }
-
-        // GET: Users/Details/5
-        public ActionResult Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            User user = db.Users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
         }
 
         // GET: Users/Create
@@ -50,7 +36,11 @@ namespace Laba1_sql_injection.Controllers
         {
             if (ModelState.IsValid)
             {
+                var passHash = PasswordHash.ComputeHash(user.Password);
+
+                user.Password = passHash;
                 user.Id = Guid.NewGuid();
+
                 db.Users.Add(user);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -58,6 +48,24 @@ namespace Laba1_sql_injection.Controllers
 
             return View(user);
         }
+
+        #region Unused actions
+
+        // GET: Users/Details/5
+        public ActionResult Details(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            User user = db.Users.Find(id);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            return View(user);
+        }
+
 
         // GET: Users/Edit/5
         public ActionResult Edit(Guid? id)
@@ -116,6 +124,8 @@ namespace Laba1_sql_injection.Controllers
             return RedirectToAction("Index");
         }
 
+        #endregion
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -124,5 +134,6 @@ namespace Laba1_sql_injection.Controllers
             }
             base.Dispose(disposing);
         }
+
     }
 }
