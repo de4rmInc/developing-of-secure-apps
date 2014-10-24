@@ -1,4 +1,6 @@
-﻿using Laba1_sql_injection.Models;
+﻿using System.Data;
+using System.Security;
+using Laba1_sql_injection.Models;
 using Laba1_sql_injection.Security;
 using System;
 using System.Collections.Generic;
@@ -26,9 +28,9 @@ namespace Laba1_sql_injection.Controllers
         {
             if (ModelState.IsValid)
             {
-                var usr = db.Users.FirstOrDefault(user => user.UserName == model.UserName || user.Email == model.UserName);
+                var userExists = model.Checked ? model.IsValidLoginSafe(db) : model.IsValidLoginUnsafe();
 
-                if (usr == null || !PasswordHash.Equals(usr.Password, model.Password))
+                if (!userExists)
                 {
                     ModelState.AddModelError("", "Username or password is incorrect.");
                 }
@@ -39,19 +41,6 @@ namespace Laba1_sql_injection.Controllers
             }
 
             return View(model);
-        }
-
-        private bool IsValidLogin(UserViewModel model)
-        {
-            using (var connection = new SqlConnection(db.Database.Connection.ConnectionString))
-            {
-                SqlCommand s = new SqlCommand("", connection);
-                SqlParameter p = new SqlParameter();
-
-
-            }
-
-            return false;
         }
 
         protected override void Dispose(bool disposing)

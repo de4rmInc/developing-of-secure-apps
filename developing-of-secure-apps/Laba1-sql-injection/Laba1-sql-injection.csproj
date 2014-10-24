@@ -116,6 +116,7 @@
     <Compile Include="Models\UserViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\PasswordHash.cs" />
+    <Compile Include="Security\VerifyCredentials.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
