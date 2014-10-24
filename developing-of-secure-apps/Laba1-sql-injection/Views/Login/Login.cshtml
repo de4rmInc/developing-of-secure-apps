@@ -6,7 +6,7 @@
 
 <h2>@ViewBag.Title</h2>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Login", "Login", FormMethod.Post, new { @class = "login-form" }))
 {
     @Html.AntiForgeryToken()
 

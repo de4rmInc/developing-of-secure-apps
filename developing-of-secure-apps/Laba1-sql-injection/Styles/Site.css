@@ -1,0 +1,15 @@
+﻿body {
+    background:#ececec;
+}
+
+.content{
+    margin: 0 auto;
+    background: #bcbcbc;
+    width: 40%;
+    padding: 20px 80px 40px;
+}
+
+.login-form{
+    margin: 0 auto;
+    width: 50%;
+}
