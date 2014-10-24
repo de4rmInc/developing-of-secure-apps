@@ -51,7 +51,27 @@ namespace HashAlgorithms.HashAlgorithms
             return result;
         }
 
+        /// <summary>
+        /// Shift to the right
+        /// </summary>
+        /// <param name="x">number</param>
+        /// <param name="n">shift</param>
+        /// <returns></returns>
+        public static int SHR(int x, int n)
+        {
+            return x >> n;
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static int ROTR(int x, int n)
+        {
+            return 0;
+        }
 
         private static int Invert(int x)
         {
