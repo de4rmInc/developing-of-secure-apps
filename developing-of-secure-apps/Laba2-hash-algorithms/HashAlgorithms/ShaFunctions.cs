@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Windows.Markup;
 
-namespace HashAlgorithms.HashAlgorithms
+namespace Laba2_hash_algorithms.HashAlgorithms
 {
     public static class ShaFunctions
     {
@@ -63,7 +62,7 @@ namespace HashAlgorithms.HashAlgorithms
         }
 
         /// <summary>
-        /// 
+        /// Cicle rotate to the right
         /// </summary>
         /// <param name="x"></param>
         /// <param name="n"></param>

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace HashAlgorithms.Properties
+namespace Laba2_hash_algorithms.Properties
 {
 
 

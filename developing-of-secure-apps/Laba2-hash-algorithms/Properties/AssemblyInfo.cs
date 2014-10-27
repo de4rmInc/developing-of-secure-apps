@@ -7,11 +7,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("HashAlgorithms")]
+[assembly: AssemblyTitle("Laba2-hash-algorithms")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("EPAM Systems")]
-[assembly: AssemblyProduct("HashAlgorithms")]
+[assembly: AssemblyProduct("Laba2-hash-algorithms")]
 [assembly: AssemblyCopyright("Copyright © EPAM Systems 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
