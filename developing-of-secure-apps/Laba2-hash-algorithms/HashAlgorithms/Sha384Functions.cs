@@ -16,17 +16,17 @@ namespace Laba2_hash_algorithms.HashAlgorithms
 
         public static BigInteger Ch(BigInteger x, BigInteger y, BigInteger z)
         {
-            return DivRem((x & y) + (Invert(x) & z), module64);
+            return (x & y) ^ (Invert(x) & z);
         }
 
         public static BigInteger Parity(BigInteger x, BigInteger y, BigInteger z)
         {
-            return DivRem(x + y + z, module64);
+            return x ^ y ^ z;
         }
 
         public static BigInteger Maj(BigInteger x, BigInteger y, BigInteger z)
         {
-            return DivRem((x & y) + (x & z) + (y & z), module64);
+            return (x & y) ^ (x & z) ^ (y & z);
         }
 
         public static BigInteger F(BigInteger t, BigInteger x, BigInteger y, BigInteger z)
@@ -84,44 +84,24 @@ namespace Laba2_hash_algorithms.HashAlgorithms
             return (x << n) | (x >> (_w_64 - n));
         }
 
-        public static BigInteger Sum0to256(BigInteger x)
-        {
-            return DivRem(ROTR(x, 2) + ROTR(x, 13) + ROTR(x, 22), module64);
-        }
-
-        public static BigInteger Sum1to256(BigInteger x)
-        {
-            return DivRem(ROTR(x, 6) + ROTR(x, 11) + ROTR(x, 25), module64);
-        }
-
         public static BigInteger Sum0to512(BigInteger x)
         {
-            return DivRem(ROTR(x, 28) + ROTR(x, 34) + ROTR(x, 39), module64);
+            return ROTR(x, 28) ^ ROTR(x, 34) ^ ROTR(x, 39);
         }
 
         public static BigInteger Sum1to512(BigInteger x)
         {
-            return DivRem(ROTR(x, 14) + ROTR(x, 18) + ROTR(x, 41), module64);
-        }
-
-        public static BigInteger Sigm0to256(BigInteger x)
-        {
-            return DivRem(ROTR(x, 7) + ROTR(x, 18) + SHR(x, 3), module64);
-        }
-
-        public static BigInteger Sigm1to256(BigInteger x)
-        {
-            return DivRem(ROTR(x, 17) + ROTR(x, 19) + SHR(x, 10), module64);
+            return ROTR(x, 14) ^ ROTR(x, 18) ^ ROTR(x, 41);
         }
 
         public static BigInteger Sigm0to512(BigInteger x)
         {
-            return DivRem(ROTR(x, 1) + ROTR(x, 8) + SHR(x, 7), module64);
+            return ROTR(x, 1) ^ ROTR(x, 8) ^ SHR(x, 7);
         }
 
         public static BigInteger Sigm1to512(BigInteger x)
         {
-            return DivRem(ROTR(x, 19) + ROTR(x, 61) + SHR(x, 6), module64);
+            return ROTR(x, 19) ^ ROTR(x, 61) ^SHR(x, 6);
         }
 
         private static UInt64 RotateRight(UInt64 x, int n)
