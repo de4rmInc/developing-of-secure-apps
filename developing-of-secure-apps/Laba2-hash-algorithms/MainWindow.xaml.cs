@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,10 +37,19 @@ namespace Laba2_hash_algorithms
             _fileDialog.ShowDialog();
         }
 
-        void fileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        private void fileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            MessageBox.Show("opened");
-            MessageBox.Show((sender as OpenFileDialog).FileName);
+            var fileDialog = sender as OpenFileDialog;
+            if (fileDialog == null || e.Cancel)
+            {
+                return;
+            }
+
+            var fileName = fileDialog.FileName;
+
+            var fileBytes = File.ReadAllBytes(fileName);
+
+
         }
 
         private void ExitMenuItem_Click(object sender, RoutedEventArgs e)

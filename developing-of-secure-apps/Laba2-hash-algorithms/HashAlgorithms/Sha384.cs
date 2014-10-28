@@ -6,17 +6,25 @@ namespace Laba2_hash_algorithms.HashAlgorithms
 {
     public class Sha384
     {
-        public string CalculateHash()
+        private byte[] HashValue;
+
+        public byte[] CalculateHash(byte[] bytes)
         {
             var sha = SHA384.Create();
-            var g = sha.ComputeHash(new byte[1]);
+            var g = sha.ComputeHash(bytes);
+
+            return bytes;
         }
+
+
+
+
+
+
+
 
         public byte[] ComputeHash(byte[] buffer)
         {
-            if (m_bDisposed)
-                throw new ObjectDisposedException(null);
-
             // Do some validation
             if (buffer == null) throw new ArgumentNullException("buffer");
 
@@ -39,8 +47,7 @@ namespace Laba2_hash_algorithms.HashAlgorithms
         public/**/ void/**/ SHA384Managed()
         {
             if (CryptoConfig.AllowOnlyFipsAlgorithms)
-                throw new InvalidOperationException(Environment.GetResourceString("Cryptography_NonCompliantFIPSAlgorithm"));
-            Contract.EndContractBlock();
+                throw new InvalidOperationException("Cryptography_NonCompliantFIPSAlgorithm");
 
             _stateSHA384 = new UInt64[8];
             _buffer = new byte[128];
@@ -53,7 +60,7 @@ namespace Laba2_hash_algorithms.HashAlgorithms
         // public methods
         //
 
-        public override void Initialize() {
+        public void Initialize() {
             InitializeState();
 
             // Zeroize potentially sensitive information.
@@ -62,12 +69,12 @@ namespace Laba2_hash_algorithms.HashAlgorithms
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
-        protected override void HashCore(byte[] rgb, int ibStart, int cbSize) {
+        protected void HashCore(byte[] rgb, int ibStart, int cbSize) {
             _HashData(rgb, ibStart, cbSize);
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
-        protected override byte[] HashFinal() {
+        protected byte[] HashFinal() {
             return _EndHash();
         }
 
@@ -110,7 +117,7 @@ namespace Laba2_hash_algorithms.HashAlgorithms
                 fixed (byte* buffer = _buffer) {
                     fixed (UInt64* expandedBuffer = _W) {
                         if ((bufferLen > 0) && (bufferLen + partInLen >= 128)) {
-                            Buffer.InternalBlockCopy(partIn, partInBase, _buffer, bufferLen, 128 - bufferLen);
+                            Buffer.BlockCopy(partIn, partInBase, _buffer, bufferLen, 128 - bufferLen);
                             partInBase += (128 - bufferLen);
                             partInLen -= (128 - bufferLen);
                             SHATransform(expandedBuffer, stateSHA384, buffer);
@@ -119,14 +126,14 @@ namespace Laba2_hash_algorithms.HashAlgorithms
 
                         /* Copy input to temporary buffer and hash */
                         while (partInLen >= 128) {
-                            Buffer.InternalBlockCopy(partIn, partInBase, _buffer, 0, 128);
+                            Buffer.BlockCopy(partIn, partInBase, _buffer, 0, 128);
                             partInBase += 128;
                             partInLen -= 128;
                             SHATransform(expandedBuffer, stateSHA384, buffer);
                         }
 
                         if (partInLen > 0) {
-                            Buffer.InternalBlockCopy(partIn, partInBase, _buffer, bufferLen, partInLen);
+                            Buffer.BlockCopy(partIn, partInBase, _buffer, bufferLen, partInLen);
                         }
                     }
                 }
@@ -178,10 +185,46 @@ namespace Laba2_hash_algorithms.HashAlgorithms
             _HashData(pad, 0, pad.Length);
 
             /* Store digest */
-            Utils.QuadWordToBigEndian(hash, _stateSHA384, 6);
+            QuadWordToBigEndian(hash, _stateSHA384, 6);
 
             HashValue = hash;
             return hash;
+        }
+
+        // digits == number of QWORDs
+        [System.Security.SecurityCritical]  // auto-generated
+        internal unsafe static void QuadWordFromBigEndian(UInt64* x, int digits, byte* block)
+        {
+            int i;
+            int j;
+
+            for (i = 0, j = 0; i < digits; i++, j += 8)
+                x[i] = (
+                         (((UInt64)block[j]) << 56) | (((UInt64)block[j + 1]) << 48) |
+                         (((UInt64)block[j + 2]) << 40) | (((UInt64)block[j + 3]) << 32) |
+                         (((UInt64)block[j + 4]) << 24) | (((UInt64)block[j + 5]) << 16) |
+                         (((UInt64)block[j + 6]) << 8) | ((UInt64)block[j + 7])
+                        );
+        }
+
+        // encodes x (DWORD) into block (unsigned char), most significant byte first.
+        // digits = number of QWORDS
+        static void QuadWordToBigEndian(byte[] block, UInt64[] x, int digits)
+        {
+            int i;
+            int j;
+
+            for (i = 0, j = 0; i < digits; i++, j += 8)
+            {
+                block[j] = (byte)((x[i] >> 56) & 0xff);
+                block[j + 1] = (byte)((x[i] >> 48) & 0xff);
+                block[j + 2] = (byte)((x[i] >> 40) & 0xff);
+                block[j + 3] = (byte)((x[i] >> 32) & 0xff);
+                block[j + 4] = (byte)((x[i] >> 24) & 0xff);
+                block[j + 5] = (byte)((x[i] >> 16) & 0xff);
+                block[j + 6] = (byte)((x[i] >> 8) & 0xff);
+                block[j + 7] = (byte)(x[i] & 0xff);
+            }
         }
 
         private static unsafe void SHA384Expand(UInt64* x)
@@ -208,7 +251,7 @@ namespace Laba2_hash_algorithms.HashAlgorithms
             h = state[7];
 
             // fill in the first 16 blocks of W.
-            Utils.QuadWordFromBigEndian(expandedBuffer, 16, block);
+            QuadWordFromBigEndian(expandedBuffer, 16, block);
             SHA384Expand(expandedBuffer);
 
             /* Apply the SHA384 compression function */
