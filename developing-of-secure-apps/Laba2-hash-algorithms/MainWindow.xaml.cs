@@ -14,6 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using Laba2_hash_algorithms.HashAlgorithms;
+using Laba2_hash_algorithms.ViewModels;
 
 namespace Laba2_hash_algorithms
 {
@@ -23,6 +25,7 @@ namespace Laba2_hash_algorithms
     public partial class MainWindow : Window
     {
         readonly OpenFileDialog _fileDialog;
+        private HashCodeViewModel _viewmodel;
 
         public MainWindow()
         {
@@ -30,6 +33,8 @@ namespace Laba2_hash_algorithms
 
             _fileDialog = new OpenFileDialog();
             _fileDialog.FileOk += fileDialog_FileOk;
+            _viewmodel = new HashCodeViewModel();
+            this.DataContext = _viewmodel;
         }
 
         private void OpenFileMenuItem_Click(object sender, RoutedEventArgs e)
@@ -46,9 +51,22 @@ namespace Laba2_hash_algorithms
             }
 
             var fileName = fileDialog.FileName;
+            var text = fileName;
+            byte[] fileBytes;
+            if (text.EndsWith(".txt"))
+            {
+                text = File.ReadAllText(fileName);
+                fileBytes = Encoding.Default.GetBytes(text);
+            }
+            else
+            {
+                fileBytes = File.ReadAllBytes(fileName);
+            }
 
-            var fileBytes = File.ReadAllBytes(fileName);
+            var sha384 = new Sha384();
+            var hash = sha384.CalculateHash(fileBytes);
 
+            _viewmodel.SetModel(hash, text);
 
         }
 
