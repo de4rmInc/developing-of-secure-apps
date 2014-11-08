@@ -2,16 +2,15 @@
 
 namespace Laba2_hash_algorithms.HashAlgorithms
 {
-    public class Sha384
+    public class Sha384 : HashAlgorithm
     {
-
-        public byte[] CalculateHash(byte[] bytes)
+        public override byte[] CalculateHash(byte[] bytes)
         {
             var sha = new Sha384Internal();
             var hash = sha.ComputeHash(bytes);
 
             return hash;
         }
-        
+
     }
 }

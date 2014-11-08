@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using Laba2_hash_algorithms.HashAlgorithms;
 using Laba2_hash_algorithms.ViewModels;
+using Laba2_hash_algorithms.Models;
 
 namespace Laba2_hash_algorithms
 {
@@ -50,23 +51,10 @@ namespace Laba2_hash_algorithms
                 return;
             }
 
-            var fileName = fileDialog.FileName;
-            var text = fileName;
-            byte[] fileBytes;
-            if (text.EndsWith(".txt"))
-            {
-                text = File.ReadAllText(fileName);
-                fileBytes = Encoding.Default.GetBytes(text);
-            }
-            else
-            {
-                fileBytes = File.ReadAllBytes(fileName);
-            }
+            var hshCode = new FileHashCodeModel(fileDialog.FileName);
+            hshCode.CalculateFileHashCode();
 
-            var sha384 = new Sha384();
-            var hash = sha384.CalculateHash(fileBytes);
-
-            _viewmodel.SetModel(hash, text);
+            _viewmodel.SetModel(hshCode.HashCode, hshCode.IsTxt ? hshCode.Text : hshCode.FilePath);
 
         }
 

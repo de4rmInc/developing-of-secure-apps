@@ -55,7 +55,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Models\HashCodeModel.cs" />
+    <Compile Include="HashAlgorithms\HashAlgorithm.cs" />
+    <Compile Include="HashAlgorithms\IHashAlgorithm.cs" />
+    <Compile Include="Models\FileHashCodeModel.cs" />
     <Compile Include="ViewModels\HashCodeViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
