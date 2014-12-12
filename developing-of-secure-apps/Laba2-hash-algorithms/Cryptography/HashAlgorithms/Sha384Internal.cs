@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Laba2_hash_algorithms.HashAlgorithms
+namespace Laba2_hash_algorithms.Cryptography.HashAlgorithms
 {
     internal class Sha384Internal
     {

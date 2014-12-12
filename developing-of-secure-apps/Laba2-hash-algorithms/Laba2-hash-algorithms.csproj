@@ -38,6 +38,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -55,10 +56,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="HashAlgorithms\HashAlgorithm.cs" />
-    <Compile Include="HashAlgorithms\IHashAlgorithm.cs" />
-    <Compile Include="Models\FileHashCodeModel.cs" />
-    <Compile Include="ViewModels\HashCodeViewModel.cs" />
+    <Compile Include="Cryptography\ProtectData.cs" />
+    <Compile Include="Cryptography\HashAlgorithms\HashAlgorithm.cs" />
+    <Compile Include="Cryptography\HashAlgorithms\IHashAlgorithm.cs" />
+    <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="Models\CryptographyModel.cs" />
+    <Compile Include="ViewModels\CryptographyViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -67,8 +70,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="HashAlgorithms\Sha384.cs" />
-    <Compile Include="HashAlgorithms\Sha384Internal.cs" />
+    <Compile Include="Cryptography\HashAlgorithms\Sha384.cs" />
+    <Compile Include="Cryptography\HashAlgorithms\Sha384Internal.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

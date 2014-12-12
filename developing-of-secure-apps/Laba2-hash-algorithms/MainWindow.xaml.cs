@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
-using Laba2_hash_algorithms.HashAlgorithms;
+using Laba2_hash_algorithms.Cryptography.HashAlgorithms;
 using Laba2_hash_algorithms.ViewModels;
 using Laba2_hash_algorithms.Models;
 
@@ -26,7 +26,7 @@ namespace Laba2_hash_algorithms
     public partial class MainWindow : Window
     {
         readonly OpenFileDialog _fileDialog;
-        private HashCodeViewModel _viewmodel;
+        private CryptographyViewModel _viewmodel;
 
         public MainWindow()
         {
@@ -34,7 +34,7 @@ namespace Laba2_hash_algorithms
 
             _fileDialog = new OpenFileDialog();
             _fileDialog.FileOk += fileDialog_FileOk;
-            _viewmodel = new HashCodeViewModel();
+            _viewmodel = new CryptographyViewModel();
             this.DataContext = _viewmodel;
         }
 
@@ -51,16 +51,22 @@ namespace Laba2_hash_algorithms
                 return;
             }
 
-            var hshCode = new FileHashCodeModel(fileDialog.FileName);
-            hshCode.CalculateFileHashCode();
+            var model = new CryptographyModel(fileDialog.FileName);
+            model.CalculateFileHashCode();
+            model.Encrypt();
 
-            _viewmodel.SetModel(hshCode.HashCode, hshCode.IsTxt ? hshCode.Text : hshCode.FilePath);
+            _viewmodel.SetModel(model);
 
         }
 
         private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void SwitchView_Click(object sender, RoutedEventArgs e)
+        {
+            _viewmodel.IsViewModeBytes = !_viewmodel.IsViewModeBytes;
         }
     }
 }

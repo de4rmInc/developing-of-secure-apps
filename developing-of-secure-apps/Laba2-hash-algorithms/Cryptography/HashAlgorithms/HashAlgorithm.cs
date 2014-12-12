@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Laba2_hash_algorithms.HashAlgorithms
+namespace Laba2_hash_algorithms.Cryptography.HashAlgorithms
 {
     public abstract class HashAlgorithm : IHashAlgorithm
     {
