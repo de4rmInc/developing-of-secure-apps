@@ -25,48 +25,15 @@ namespace Laba2_hash_algorithms
     /// </summary>
     public partial class MainWindow : Window
     {
-        readonly OpenFileDialog _fileDialog;
-        private CryptographyViewModel _viewmodel;
-
         public MainWindow()
         {
             InitializeComponent();
-
-            _fileDialog = new OpenFileDialog();
-            _fileDialog.FileOk += fileDialog_FileOk;
-            _viewmodel = new CryptographyViewModel();
-            this.DataContext = _viewmodel;
         }
-
-        private void OpenFileMenuItem_Click(object sender, RoutedEventArgs e)
+        public MainWindow(CryptographyViewModel viewModel)
         {
-            _fileDialog.ShowDialog();
-        }
+            InitializeComponent();
 
-        private void fileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            var fileDialog = sender as OpenFileDialog;
-            if (fileDialog == null || e.Cancel)
-            {
-                return;
-            }
-
-            var model = new CryptographyModel(fileDialog.FileName);
-            model.CalculateFileHashCode();
-            model.Encrypt();
-
-            _viewmodel.SetModel(model);
-
-        }
-
-        private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-
-        private void SwitchView_Click(object sender, RoutedEventArgs e)
-        {
-            _viewmodel.IsViewModeBytes = !_viewmodel.IsViewModeBytes;
+            this.DataContext = viewModel;
         }
     }
 }

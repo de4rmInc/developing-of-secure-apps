@@ -56,6 +56,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Commands\RelayCommand.cs" />
+    <Compile Include="Converters\BoolToCollapsedConverter.cs" />
     <Compile Include="Cryptography\ProtectData.cs" />
     <Compile Include="Cryptography\HashAlgorithms\HashAlgorithm.cs" />
     <Compile Include="Cryptography\HashAlgorithms\IHashAlgorithm.cs" />

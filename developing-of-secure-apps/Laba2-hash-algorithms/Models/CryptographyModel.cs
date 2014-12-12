@@ -40,9 +40,14 @@ namespace Laba2_hash_algorithms.Models
 
             FileBytes = ReadFile(FilePath);
 
-            HashCode = _hashAlgorithm.CalculateHash(FileBytes);
+            HashCode = CalculateHash(FileBytes);
 
             return HashCode;
+        }
+
+        public byte[] CalculateHash(byte[] bytes)
+        {
+            return _hashAlgorithm.CalculateHash(bytes);
         }
 
         public byte[] Encrypt()

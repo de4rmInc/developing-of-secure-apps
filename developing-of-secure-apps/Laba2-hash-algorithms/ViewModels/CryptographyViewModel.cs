@@ -1,15 +1,29 @@
-﻿using System;
+﻿using Laba2_hash_algorithms.Commands;
+using Laba2_hash_algorithms.Models;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 
 namespace Laba2_hash_algorithms.ViewModels
 {
     public class CryptographyViewModel : BaseViewModel
     {
+        private ICommand _commandOpenFile;
+        private ICommand _commandSwitchViewMode;
+        private ICommand _commandCloseWindow;
+
+        private OpenFileDialog _openFileDialog;
+        private bool _fileLoaded;
+        private CryptographyModel _cryptoModel;
+
         private readonly int countOfBytesPerRow = 16;
         private const string ViewModeText_Bytes = "Switch to bytes";
         private const string ViewModeText_Text = "Switch to text";
@@ -19,40 +33,71 @@ namespace Laba2_hash_algorithms.ViewModels
         private string _encryptedValue;
         private string _originalValueHex;
         private bool _isViewModeBytes;
-
         private ObservableCollection<ObservableCollection<string>> _originValueBytes;
-
-        public ObservableCollection<ObservableCollection<string>> OriginValueBytes
-        {
-            get { return _originValueBytes; }
-            set
-            {
-                _originValueBytes = value;
-                RaisePropertyChanged();
-            }
-        }
         private ObservableCollection<ObservableCollection<string>> _encryptedValueBytes;
-
-        public ObservableCollection<ObservableCollection<string>> EncryptedValueBytes
-        {
-            get { return _encryptedValueBytes; }
-            set
-            {
-                _encryptedValueBytes = value;
-                RaisePropertyChanged();
-            }
-        }
 
         public CryptographyViewModel()
         {
             HashCodeHex = "init hex";
             HashCodeBin = "init bin";
+            IsViewModeBytes = true;
             _originalValue = string.Empty;
             OriginValueBytes = new ObservableCollection<ObservableCollection<string>>();
             EncryptedValueBytes = new ObservableCollection<ObservableCollection<string>>();
+
+            _openFileDialog = new OpenFileDialog();
+            _cryptoModel = new CryptographyModel(string.Empty);            
+
+            InitializeCommands();
+        }
+        #region Commands
+        private void InitializeCommands()
+        {
+            _commandOpenFile = new RelayCommand((o) => OpenFileDialog(o));
+            _commandSwitchViewMode = new RelayCommand((o) => IsViewModeBytes = !IsViewModeBytes);
+            _commandCloseWindow = new RelayCommand((o) => CloseWindow(o));
+
         }
 
-        public CryptographyViewModel SetModel(Models.CryptographyModel model)
+        public ICommand CommandOpenFile
+        {
+            get { return _commandOpenFile; }
+        }
+
+        public ICommand CommandSwitchViewMode
+        {
+            get { return _commandSwitchViewMode; }
+        }
+        public ICommand CommandCloseWindow
+        {
+            get { return _commandCloseWindow; }
+        }
+
+        private void OpenFileDialog(object o)
+        {
+            this._fileLoaded = false;
+            if (_openFileDialog.ShowDialog() ?? false)
+            {
+                _cryptoModel.FilePath = _openFileDialog.FileName;
+                _cryptoModel.CalculateFileHashCode();
+                _cryptoModel.Encrypt();
+
+                this.SetModel(_cryptoModel);
+            }
+            this._fileLoaded = true;
+        }
+        private void CloseWindow(object o)
+        {
+            var window = o as Window;
+            if (window != null)
+            {
+                window.Close();
+            }
+        }
+
+        #endregion
+
+        public CryptographyViewModel SetModel(CryptographyModel model)
         {
             return SetModelInternal(
                 model.HashCode,
@@ -65,14 +110,11 @@ namespace Laba2_hash_algorithms.ViewModels
         {
             HashCodeHex = ConvertToHex(hashCode);
             HashCodeBin = ConvertToBin(hashCode);
-            OriginalValueHex = ConvertToHex(originalValueBytes);
             OriginalValue = originalValue;
             EncryptedValue = ConvertToHex(encryptedValueBytes);
 
             SetCollection(originalValueBytes, OriginValueBytes);
             SetCollection(encryptedValueBytes, EncryptedValueBytes);
-
-            RaisePropertyChanged(() => OriginalValueView);
 
             return this;
         }
@@ -89,54 +131,70 @@ namespace Laba2_hash_algorithms.ViewModels
                 {
                     collectionItem.Add(Convert.ToString(values[i++], 16));
                 }
-
+                collectionItem.CollectionChanged += OriginValueBytes_CollectionChanged;
                 collection.Add(collectionItem);
             }
         }
 
-        public string OriginalValueHex
+        void OriginValueBytes_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            get { return _originalValueHex; }
+            if (!this._fileLoaded) return;
+
+            var bytes = CollectionToArray(OriginValueBytes);
+            var newHash = _cryptoModel.CalculateHash(bytes);
+            HashCodeHex = ConvertToHex(newHash);
+            HashCodeBin = ConvertToBin(newHash);
+            if (_cryptoModel.IsTxt)
+            {
+                OriginalValue = Encoding.Default.GetString(bytes);
+            }
+        }
+
+        private byte[] CollectionToArray(ObservableCollection<ObservableCollection<string>> collection)
+        {
+            var listBytes = new List<byte>();
+
+            foreach (var subCollection in collection)
+            {
+                listBytes.AddRange(subCollection.Select(x => Convert.ToByte(x, 16)));
+            }
+
+            return listBytes.ToArray();
+        }
+
+        public ObservableCollection<ObservableCollection<string>> OriginValueBytes
+        {
+            get { return _originValueBytes; }
             set
             {
-                _originalValueHex = value;
+                _originValueBytes = value;
                 RaisePropertyChanged();
             }
         }
 
+        public ObservableCollection<ObservableCollection<string>> EncryptedValueBytes
+        {
+            get { return _encryptedValueBytes; }
+            set
+            {
+                _encryptedValueBytes = value;
+                RaisePropertyChanged();
+            }
+        }
         public bool IsViewModeBytes
         {
             get { return _isViewModeBytes; }
             set
             {
                 _isViewModeBytes = value;
-                RaisePropertyChanged();
                 RaisePropertyChanged(() => ViewModeText);
-                RaisePropertyChanged(() => OriginalValueView);
+                RaisePropertyChanged();
             }
         }
-
         public string ViewModeText
         {
             get { return !_isViewModeBytes ? ViewModeText_Bytes : ViewModeText_Text; }
         }
-        public string OriginalValueView
-        {
-            get { return _isViewModeBytes ? OriginalValueHex : OriginalValue; }
-            set
-            {
-                if (_isViewModeBytes)
-                {
-                    OriginalValueHex = value;
-                }
-                else
-                {
-                    OriginalValue = value;
-                }
-                RaisePropertyChanged();
-            }
-        }
-
         public string HashCodeHex
         {
             get { return _hashCodeHex; }
@@ -170,6 +228,14 @@ namespace Laba2_hash_algorithms.ViewModels
             {
                 if (value != this._originalValue)
                 {
+                    if (_cryptoModel.IsTxt)
+                    {
+                        var bytes = Encoding.Default.GetBytes(value);
+                        var newHash = _cryptoModel.CalculateHash(bytes);
+                        HashCodeHex = ConvertToHex(newHash);
+                        HashCodeBin = ConvertToBin(newHash);
+                        SetCollection(bytes, OriginValueBytes);
+                    }
                     this._originalValue = value;
                     RaisePropertyChanged();
                 }
