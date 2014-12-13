@@ -47,6 +47,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Visiblox.Charts">
+      <HintPath>C:\Program Files (x86)\Visiblox\Visiblox Charts v4.0.7\Ultimate\Wpf\4.0\Visiblox.Charts.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -58,12 +61,15 @@
     </ApplicationDefinition>
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Converters\BoolToCollapsedConverter.cs" />
+    <Compile Include="Cryptography\HashAlgorithms\RoundEvent.cs" />
     <Compile Include="Cryptography\ProtectData.cs" />
     <Compile Include="Cryptography\HashAlgorithms\HashAlgorithm.cs" />
     <Compile Include="Cryptography\HashAlgorithms\IHashAlgorithm.cs" />
+    <Compile Include="Helpers\BytesConverter.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="Models\CryptographyModel.cs" />
     <Compile Include="ViewModels\CryptographyViewModel.cs" />
+    <Compile Include="Models\HashCodeRoundInfo.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

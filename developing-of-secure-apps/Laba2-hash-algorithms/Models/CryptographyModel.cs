@@ -73,5 +73,17 @@ namespace Laba2_hash_algorithms.Models
 
             return fileBytes;
         }
+
+        public event RoundEventHandler RoundChanged
+        {
+            remove
+            {
+                _hashAlgorithm.RoundChanged -= value;
+            }
+            add
+            {
+                _hashAlgorithm.RoundChanged += value;
+            }
+        }
     }
 }

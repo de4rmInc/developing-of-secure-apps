@@ -4,12 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:viewModels="clr-namespace:Laba2_hash_algorithms.ViewModels"
         xmlns:converters="clr-namespace:Laba2_hash_algorithms.Converters"
+        xmlns:charts="clr-namespace:Visiblox.Charts;assembly=Visiblox.Charts"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Name="MainWindowName"
         d:DataContext="{d:DesignInstance viewModels:CryptographyViewModel}"
         
-        Title="MainWindow" Width="778" MinWidth="810" MinHeight="400" Height="550" MaxWidth="810">
+        Title="MainWindow" Width="778" MinWidth="810" MinHeight="400" Height="550">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -44,7 +45,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="390"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <DataGrid Grid.Row="0" Grid.Column="0" Margin="10,5,10,5" 
@@ -72,7 +73,7 @@
                     <DataGridTextColumn Binding="{Binding Path=[15]}" Header="15"/>
                 </DataGrid.Columns>
             </DataGrid>
-            <RichTextBox Grid.Row="0" Grid.Column="0" Margin="10,5,10,5" 
+            <RichTextBox Grid.Row="0" Grid.Column="0" Margin="10,5,10,5" IsEnabled="{Binding IsText}"
                          Visibility="{Binding IsViewModeBytes, 
                                         Converter={StaticResource BoolToCollapsedConverter}, 
                                         ConverterParameter={x:Static converters:ConverterParam.Inverted}}"
@@ -85,30 +86,35 @@
                     </Paragraph>
                 </FlowDocument>
             </RichTextBox>
-            <DataGrid Grid.Row="0" Grid.Column="1" Margin="10,5,10,5"  Visibility="Collapsed"
-                      AutoGenerateColumns="False" 
-                      CanUserReorderColumns="False" CanUserSortColumns="False" 
-                      CanUserResizeColumns="False" CanUserResizeRows="False"
-                      ItemsSource="{Binding EncryptedValueBytes}">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Path=[0]}" Header="0"/>
-                    <DataGridTextColumn Binding="{Binding Path=[1]}" Header="1"/>
-                    <DataGridTextColumn Binding="{Binding Path=[2]}" Header="2"/>
-                    <DataGridTextColumn Binding="{Binding Path=[3]}" Header="3"/>
-                    <DataGridTextColumn Binding="{Binding Path=[4]}" Header="4"/>
-                    <DataGridTextColumn Binding="{Binding Path=[5]}" Header="5"/>
-                    <DataGridTextColumn Binding="{Binding Path=[6]}" Header="6"/>
-                    <DataGridTextColumn Binding="{Binding Path=[7]}" Header="7"/>
-                    <DataGridTextColumn Binding="{Binding Path=[8]}" Header="8"/>
-                    <DataGridTextColumn Binding="{Binding Path=[9]}" Header="9"/>
-                    <DataGridTextColumn Binding="{Binding Path=[10]}" Header="10"/>
-                    <DataGridTextColumn Binding="{Binding Path=[11]}" Header="11"/>
-                    <DataGridTextColumn Binding="{Binding Path=[12]}" Header="12"/>
-                    <DataGridTextColumn Binding="{Binding Path=[13]}" Header="13"/>
-                    <DataGridTextColumn Binding="{Binding Path=[14]}" Header="14"/>
-                    <DataGridTextColumn Binding="{Binding Path=[15]}" Header="15"/>
-                </DataGrid.Columns>
-            </DataGrid>
+            <Grid x:Name="ChartGrid" Grid.Row="0" Grid.Column="1" Margin="10,5,10,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <charts:Chart ValidationKey=""
+                              Title="Hash code avalanche effect" 
+                                                            
+                              >                    
+                    <charts:Chart.XAxis>
+                        <charts:LinearAxis Title="Round"/>
+                    </charts:Chart.XAxis>
+                    <charts:Chart.YAxis>
+                        <charts:LinearAxis Title="Bits changed"/>
+                    </charts:Chart.YAxis>
+                    <charts:Chart.Series>
+                        <charts:LineSeries ShowPoints="true">
+                            <charts:LineSeries.DataSeries>
+                                <charts:BindableDataSeries  ItemsSource="{Binding HashCodeSeries}"
+                                          XValueBinding="{Binding Round}"
+                                          YValueBinding="{Binding BitsChanged}" />
+                            </charts:LineSeries.DataSeries>
+                        </charts:LineSeries>
+                    </charts:Chart.Series>
+
+                </charts:Chart>
+
+            </Grid>
 
             <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,5,10,5">
                 <Label Content="Hashcode HEX"/>
@@ -137,4 +143,9 @@
             <Run Text="{Binding EncryptedValue}"/>
         </Paragraph>
     </FlowDocument>
-</RichTextBox>-->
+</RichTextBox>
+    
+    charts:AutoSeriesGenerator.XValuePath="Round"
+                              charts:AutoSeriesGenerator.YValuePath="BitsChanged"
+                              charts:AutoSeriesGenerator.ChartSeriesProvider="LineSeries"
+                              charts:AutoSeriesGenerator.ItemsSource="{Binding HashCodeSeries, Mode=OneWay}"-->

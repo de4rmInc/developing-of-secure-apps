@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Linq;
 
 namespace Laba2_hash_algorithms.Cryptography.HashAlgorithms
 {
     internal class Sha384Internal
     {
+        int _round = 0;
+        UInt64[] _prevStateBuf = new UInt64[8];
         //word length
         private const int _w_64 = 64;
         private byte[] HashValue;
@@ -22,6 +25,9 @@ namespace Laba2_hash_algorithms.Cryptography.HashAlgorithms
             HashValue = HashFinal();
             byte[] Tmp = (byte[])HashValue.Clone();
             Initialize();
+
+            RaiseRoundEvent(new RoundEventArgs(0, 0, lastRound: true));
+
             return (Tmp);
         }
 
@@ -68,6 +74,7 @@ namespace Laba2_hash_algorithms.Cryptography.HashAlgorithms
 
         private void InitializeState()
         {
+            _round = 0;
             _count = 0;
 
             _stateSHA384[0] = 0xcbbb9d5dc1059ed8;
@@ -90,7 +97,7 @@ namespace Laba2_hash_algorithms.Cryptography.HashAlgorithms
             int bufferLen;
             int partInLen = cbSize;
             int partInBase = ibStart;
-
+            
             /* Compute length of buffer */
             bufferLen = (int)(_count & 0x7f);
 
@@ -105,20 +112,28 @@ namespace Laba2_hash_algorithms.Cryptography.HashAlgorithms
                     {
                         if ((bufferLen > 0) && (bufferLen + partInLen >= 128))
                         {
+                            CopyState(_prevStateBuf, stateSHA384);
+
                             Buffer.BlockCopy(partIn, partInBase, _buffer, bufferLen, 128 - bufferLen);
                             partInBase += (128 - bufferLen);
                             partInLen -= (128 - bufferLen);
                             SHATransform(expandedBuffer, stateSHA384, buffer);
                             bufferLen = 0;
+
+                            RaiseRoundEvent(new RoundEventArgs(_round++, BitsChanged(stateSHA384, _prevStateBuf)));
                         }
 
                         /* Copy input to temporary buffer and hash */
                         while (partInLen >= 128)
                         {
+                            CopyState(_prevStateBuf, stateSHA384);
+
                             Buffer.BlockCopy(partIn, partInBase, _buffer, 0, 128);
                             partInBase += 128;
                             partInLen -= 128;
                             SHATransform(expandedBuffer, stateSHA384, buffer);
+
+                            RaiseRoundEvent(new RoundEventArgs(_round++, BitsChanged(stateSHA384, _prevStateBuf)));
                         }
 
                         if (partInLen > 0)
@@ -128,6 +143,25 @@ namespace Laba2_hash_algorithms.Cryptography.HashAlgorithms
                     }
                 }
             }
+        }
+
+        private unsafe static void CopyState(UInt64[] prevBuf, UInt64* stateSHA384)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                prevBuf[i] = stateSHA384[i];
+            }
+        }
+
+        private unsafe int BitsChanged(UInt64* stateSHA384, UInt64[] prev)
+        {
+            var h = stateSHA384[7];
+            int changed = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                changed += Convert.ToString((long)(prev[i] ^ stateSHA384[i]), 2).Count(x => x == '1');
+            }
+            return changed;
         }
 
 
@@ -425,6 +459,15 @@ namespace Laba2_hash_algorithms.Cryptography.HashAlgorithms
         {
             return ROTR(x, 19) ^ ROTR(x, 61) ^ SHR(x, 6);
         }
-        
+
+        public static event RoundEventHandler RoundChanged;
+
+        private static void RaiseRoundEvent(RoundEventArgs e)
+        {
+            if (RoundChanged != null)
+            {
+                RoundChanged(e);
+            }
+        }
     }
 }

@@ -19,5 +19,7 @@ namespace Laba2_hash_algorithms.Cryptography.HashAlgorithms
         }
 
         private static HashAlgorithm _default = new Sha384();
+
+        public abstract event RoundEventHandler RoundChanged;
     }
 }

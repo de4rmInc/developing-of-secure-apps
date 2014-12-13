@@ -9,5 +9,6 @@ namespace Laba2_hash_algorithms.Cryptography.HashAlgorithms
     public interface IHashAlgorithm
     {
         byte[] CalculateHash(byte[] bytes);
+        event RoundEventHandler RoundChanged;
     }
 }
