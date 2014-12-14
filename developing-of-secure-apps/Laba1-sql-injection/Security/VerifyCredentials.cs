@@ -26,9 +26,13 @@ namespace Laba1_sql_injection.Security
         public static bool IsValidLoginUnsafe(this UserViewModel model)
         {
             bool userExists;
-            const string sqlUser = "EPAM";
-            const string sqlpassword = "Check_m8";
-            const string connectionString = "data source=EPBYGROW0188;initial catalog=laba1;";
+            //const string sqlUser = "EPAM";
+            //const string sqlpassword = "Check_m8";
+            //const string connectionString = "data source=EPBYGROW0188;initial catalog=laba1;";
+            const string sqlUser = "aliaksei";//"EPAM";
+            const string sqlpassword = "password";
+            const string connectionString = @"data source=PEROVSKIJ-PC\MSSQLSERVERV2;initial catalog=laba1;";
+
             var secureSqlPassword = new SecureString();
             foreach (var c in sqlpassword)
             {

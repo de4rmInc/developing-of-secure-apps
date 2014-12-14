@@ -16,7 +16,7 @@ namespace Laba1_sql_injection.Models
         // http://msdn.microsoft.com/en-us/data/jj591621.aspx
 
         public UserContext()
-            : base("name=User")
+            : base("name=User_home")
         {
         }
 
