@@ -35,5 +35,27 @@ namespace Laba2_hash_algorithms
 
             this.DataContext = viewModel;
         }
+
+        private void MainWindowName_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            switch (this.WindowState)
+            {
+                case System.Windows.WindowState.Maximized:
+                    this.WindowState = System.Windows.WindowState.Normal;
+                    break;
+                case System.Windows.WindowState.Normal:
+                    this.WindowState = System.Windows.WindowState.Maximized;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void MainWindowName_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
+
+        }
     }
 }
